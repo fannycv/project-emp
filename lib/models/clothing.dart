@@ -43,6 +43,6 @@ class Clothing {
   }
 
   static String getImageUrl(String path) {
-    return 'https://ekryilktiyilvxvjikox.supabase.co/storage/v1/object/public/images/$path';
+    return 'https://sjesvwkkdmyqbxijrmgy.supabase.co/storage/v1/object/public/images/$path';
   }
 }

@@ -10,14 +10,18 @@ class ClothingDatailView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Clothing Detail'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text(
+          'Clothing Detail',
+          style:  TextStyle(color: Colors.white),
+        ),
+        backgroundColor: const Color.fromRGBO(36, 36, 36, 1),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.network(clothing.image ?? ''),
+            Image.network(clothing.image ?? '', height: 400,),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
