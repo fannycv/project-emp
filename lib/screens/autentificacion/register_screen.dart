@@ -4,8 +4,10 @@ import 'login_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController =
+      TextEditingController(text: 'germancvdev@gmail.com');
+  final TextEditingController _passwordController =
+      TextEditingController(text: "E@s1-mgt");
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +19,11 @@ class RegisterScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 20),
-             Image.asset(
-              'assets/images/inicio5.png', 
-              height: 200,
-              fit: BoxFit.cover, 
-            ),
-
+              Image.asset(
+                'assets/images/inicio5.png',
+                height: 200,
+                fit: BoxFit.cover,
+              ),
               const Center(
                 child: Text(
                   'VISION8',
@@ -87,8 +88,7 @@ class RegisterScreen extends StatelessWidget {
                     await registerUser(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black, 
-
+                    backgroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -129,21 +129,29 @@ class RegisterScreen extends StatelessWidget {
   }
 
   Future<void> registerUser(BuildContext context) async {
-    final response = await Supabase.instance.client.auth.signUp(
-      email: _emailController.text,
-      password: _passwordController.text,
-    );
-
-    if (response.user == null) {
-      // Manejar error de registro
-      showMessage(context, message: 'Error al crear la cuenta: ');
-    } else {
-      // Registro exitoso, mostrar mensaje y navegar a la pantalla de inicio de sesión
-      showMessage(context, message: 'Cuenta creada con éxito');
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
+    try {
+      print("registerUser");
+      final response = await Supabase.instance.client.auth.signUp(
+        email: _emailController.text,
+        password: _passwordController.text,
+        emailRedirectTo: "io.supabase.clothingidentifierapp://login-callback/",
       );
+
+      print(response);
+
+      if (response.user == null) {
+        // Manejar error de registro
+        showMessage(context, message: 'Error al crear la cuenta: ');
+      } else {
+        // Registro exitoso, mostrar mensaje y navegar a la pantalla de inicio de sesión
+        showMessage(context, message: 'Cuenta creada con éxito');
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      }
+    } catch (e) {
+      print(e);
     }
   }
 

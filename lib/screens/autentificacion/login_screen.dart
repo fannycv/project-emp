@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:clothing_identifier/screens/home/home.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'register_screen.dart';
@@ -14,9 +17,9 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           children: [
             Image.asset(
-              'assets/images/inicio5.png', 
+              'assets/images/inicio5.png',
               height: 200,
-              fit: BoxFit.cover, 
+              fit: BoxFit.cover,
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -87,8 +90,8 @@ class LoginScreen extends StatelessWidget {
                           return;
                         }
 
-                        final response =
-                            await Supabase.instance.client.auth.signInWithPassword(
+                        final response = await Supabase.instance.client.auth
+                            .signInWithPassword(
                           email: emailController.text,
                           password: passwordController.text,
                         );
@@ -126,11 +129,50 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 20),
+                  ElevatedButton(
+                      onPressed: () async {
+                        print("Google");
+                        // final GoogleSignIn googleSignIn = GoogleSignIn();
+                        // final googleUser = await googleSignIn.signIn();
+                        // final googleAuth = await googleUser!.authentication;
+                        // final accessToken = googleAuth.accessToken;
+                        // final idToken = googleAuth.idToken;
+
+                        // if (accessToken == null) {
+                        //   throw 'No Access Token found.';
+                        // }
+                        // if (idToken == null) {
+                        //   throw 'No ID Token found.';
+                        // }
+                        try {
+                          var s = await Supabase.instance.client.auth
+                              .signInWithOAuth(
+                            OAuthProvider.google,
+
+                            redirectTo: kIsWeb
+                                ? null
+                                : "io.supabase.clothingidentifierapp://login-callback/",
+                            // authScreenLaunchMode: LaunchMode.externalApplication,
+                            // queryParams: {
+                            //   "redirect_to":
+                            //       "io.supabase.clothingidentifierapp://login-callback/"
+                            // }
+                            // idToken: idToken,
+                            // accessToken: accessToken,
+                          );
+
+                          print(s);
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
+                      child: const Text("google")),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => RegisterScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => RegisterScreen()),
                       );
                     },
                     child: Text(
