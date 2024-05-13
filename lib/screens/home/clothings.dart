@@ -3,8 +3,8 @@ import 'package:clothing_identifier/screens/clothing_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class InicioView extends StatelessWidget {
-  InicioView({super.key});
+class ClothingsView extends StatelessWidget {
+  ClothingsView({super.key});
 
   @override
   Widget build(BuildContext context) {

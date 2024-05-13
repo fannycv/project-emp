@@ -1,16 +1,15 @@
-import 'package:clothing_identifier/screens/my_uploads/my_clothings.dart';
-import 'package:clothing_identifier/screens/my_uploads/my_outfits.dart';
+import 'package:clothing_identifier/screens/home/clothings.dart';
+import 'package:clothing_identifier/screens/home/outfits.dart';
 import 'package:flutter/material.dart';
 
-class MyUploadView extends StatefulWidget {
-  const MyUploadView({super.key});
+class InicioView extends StatefulWidget {
+  const InicioView({super.key});
 
   @override
-  State<MyUploadView> createState() => _MyUploadViewState();
+  State<InicioView> createState() => _InicioViewState();
 }
 
-class _MyUploadViewState extends State<MyUploadView>
-    with TickerProviderStateMixin {
+class _InicioViewState extends State<InicioView> with TickerProviderStateMixin {
   late final TabController _tabController;
   bool loading = false;
 
@@ -43,9 +42,9 @@ class _MyUploadViewState extends State<MyUploadView>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const <Widget>[
-          MyClothingView(),
-          MyOutfitView(),
+        children: <Widget>[
+          ClothingsView(),
+          OutfitsView(),
         ],
       ),
     );

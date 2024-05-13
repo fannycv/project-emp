@@ -1,6 +1,6 @@
 import 'package:clothing_identifier/screens/galeria.dart';
 import 'package:clothing_identifier/screens/galeria/camara.dart';
-import 'package:clothing_identifier/screens/home/Inicio.dart';
+import 'package:clothing_identifier/screens/home/tabs.dart';
 import 'package:clothing_identifier/screens/my_uploads/my_uploads.dart';
 import 'package:flutter/material.dart';
 import 'package:clothing_identifier/screens/favoritos/favoritos.dart';
@@ -208,13 +208,6 @@ class _HomeViewState extends State<HomeView> {
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     _showCameraOptionsModal(context);
-      //   },
-      //   tooltip: 'Seleccionar Archivo',
-      //   child: const Icon(Icons.camera_alt),
-      // ),
     );
   }
 }
