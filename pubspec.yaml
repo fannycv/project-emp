@@ -61,7 +61,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: assets/images/vision.jpg
+  image_path: assets/images/vision.png
   remove_alpha_ios: true
   adaptive_icon_background: "#000000"
 # For information on the generic Dart part of this file, see the
