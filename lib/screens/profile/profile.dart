@@ -37,131 +37,131 @@ class PerfilView extends StatelessWidget {
           ),
         ],
       ),
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: _getUserData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
+      body: SingleChildScrollView(
+        child: FutureBuilder<Map<String, dynamic>>(
+          future: _getUserData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
 
-          final userData = snapshot.data!;
-          final displayName = userData['username'] ?? 'Usuario Desconocido';
-          final email = userData['email'] ?? 'usuario@example.com';
+            final userData = snapshot.data!;
+            final displayName = userData['username'] ?? 'Usuario Desconocido';
+            final email = userData['email'] ?? 'usuario@example.com';
 
-          return Column(
-            children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    height: 150,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(
-                            'https://i.pinimg.com/564x/e1/b0/b1/e1b0b175b623186a5645d74dc0b78a1b.jpg'),
-                        fit: BoxFit.cover,
+            return Column(
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      height: 150,
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              'https://i.pinimg.com/564x/e1/b0/b1/e1b0b175b623186a5645d74dc0b78a1b.jpg'),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    bottom: -50,
-                    left: 20,
-                    child: CircleAvatar(
-                      radius: 60,
-                      backgroundColor: Colors.white,
-                      backgroundImage: NetworkImage(
-                        'https://i.pinimg.com/474x/23/4b/9e/234b9ee3d4e06c991c5f1b18fdc20bde.jpg',
+                    Positioned(
+                      bottom: -50,
+                      left: 20,
+                      child: CircleAvatar(
+                        radius: 60,
+                        backgroundColor: Colors.white,
+                        backgroundImage: NetworkImage(
+                          'https://i.pinimg.com/474x/23/4b/9e/234b9ee3d4e06c991c5f1b18fdc20bde.jpg',
+                        ),
                       ),
                     ),
+                  ],
+                ),
+                const SizedBox(height: 70),
+                // Información del usuario
+                Text(
+                  displayName,
+                  style: const TextStyle(fontSize: 24),
+                ),
+                Text(
+                  email,
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+                const SizedBox(height: 20),
+                // Estadísticas
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          '150',
+                          style: TextStyle(fontSize: 24),
+                        ),
+                        Text(
+                          'Comentarios',
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          '500',
+                          style: TextStyle(fontSize: 24),
+                        ),
+                        Text(
+                          'Seguidores',
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          '300',
+                          style: TextStyle(fontSize: 24),
+                        ),
+                        Text(
+                          'Siguiendo',
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => EditProfileView()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 70),
-              // Información del usuario
-              Text(
-                displayName,
-                style: const TextStyle(fontSize: 24),
-              ),
-              Text(
-                email,
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-              const SizedBox(height: 20),
-              // Estadísticas
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        '150',
-                        style: TextStyle(fontSize: 24),
-                      ),
-                      Text(
-                        'Comentarios',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        '500',
-                        style: TextStyle(fontSize: 24),
-                      ),
-                      Text(
-                        'Seguidores',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        '300',
-                        style: TextStyle(fontSize: 24),
-                      ),
-                      Text(
-                        'Siguiendo',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => EditProfileView()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                  child: const Text(
+                    'Editar perfil',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-                child: const Text(
-                  'Editar perfil',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
+                const SizedBox(height: 20),
+                // Sección de imágenes
+                const Text(
+                  'Outfits Favoritos',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-              ),
-              const SizedBox(height: 20),
-              // Sección de imágenes
-              const Text(
-                'Outfits Favoritos',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              Expanded(
-                child: FutureBuilder<List<Favorite>>(
+                FutureBuilder<List<Favorite>>(
                   future: getData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -173,6 +173,8 @@ class PerfilView extends StatelessWidget {
 
                     final favorites = snapshot.data!;
                     return GridView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         crossAxisSpacing: 4.0,
@@ -195,10 +197,10 @@ class PerfilView extends StatelessWidget {
                     );
                   },
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

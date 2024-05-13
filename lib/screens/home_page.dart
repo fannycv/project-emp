@@ -18,7 +18,7 @@ class WelcomePage extends StatelessWidget {
           Positioned.fill(
             child: CarouselSlider(
               items: [
-                'assets/images/i1.jpeg',
+                'assets/images/in1.jpeg',
                 'assets/images/i2.jpeg',
                 'assets/images/i3.jpeg',
                 'assets/images/i4.jpeg',
@@ -92,7 +92,7 @@ class WelcomePage extends StatelessWidget {
                               height: 50,
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
-                                color:  Color.fromARGB(255, 139, 142, 144),
+                                color: const Color.fromARGB(255, 139, 142, 144),
                               ),
                               child: const Center(
                                 child: Icon(
