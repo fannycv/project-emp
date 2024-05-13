@@ -1,6 +1,7 @@
 import 'package:clothing_identifier/screens/galeria.dart';
 import 'package:clothing_identifier/screens/galeria/camara.dart';
 import 'package:clothing_identifier/screens/home/Inicio.dart';
+import 'package:clothing_identifier/screens/my_uploads/my_uploads.dart';
 import 'package:flutter/material.dart';
 import 'package:clothing_identifier/screens/favoritos/favoritos.dart';
 import 'package:clothing_identifier/screens/clothing.dart';
@@ -17,17 +18,17 @@ class _HomeViewState extends State<HomeView> {
   final List<Widget> _tabs = [
     InicioView(),
     FavoritesPage(),
-    InicioView(),
-    GaleriaView(),
+    MyUploadView(),
+    const GaleriaView(),
     ClothingView(),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      if (_selectedIndex == 2) {
-        _showCameraOptionsModal(context);
-      }
+      // if (_selectedIndex == 2) {
+      //   _showCameraOptionsModal(context);
+      // }
     });
   }
 
@@ -98,9 +99,9 @@ class _HomeViewState extends State<HomeView> {
               );
             },
             child: const Padding(
-              padding:  EdgeInsets.only(right: 10),
+              padding: EdgeInsets.only(right: 10),
               child: CircleAvatar(
-                backgroundImage:  NetworkImage(
+                backgroundImage: NetworkImage(
                   'https://images.unsplash.com/photo-1515621061946-eff1c2a352bd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1089&q=80',
                 ),
               ),
@@ -207,13 +208,13 @@ class _HomeViewState extends State<HomeView> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showCameraOptionsModal(context);
-        },
-        tooltip: 'Seleccionar Archivo',
-        child: Icon(Icons.camera_alt),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     _showCameraOptionsModal(context);
+      //   },
+      //   tooltip: 'Seleccionar Archivo',
+      //   child: const Icon(Icons.camera_alt),
+      // ),
     );
   }
 }

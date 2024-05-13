@@ -1,10 +1,24 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:clothing_identifier/models/clothing.dart';
 import 'package:clothing_identifier/screens/clothing_detail.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
-class InicioView extends StatelessWidget {
-  InicioView({super.key});
+final supabase = Supabase.instance.client;
+
+class MyUploadView extends StatefulWidget {
+  const MyUploadView({super.key});
+
+  @override
+  State<MyUploadView> createState() => _MyUploadViewState();
+}
+
+class _MyUploadViewState extends State<MyUploadView> {
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -97,14 +111,101 @@ class InicioView extends StatelessWidget {
           }
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: loading
+            ? null
+            : () {
+                takePicture();
+              },
+        tooltip: 'Tomar foto',
+        child: loading
+            ? const CircularProgressIndicator()
+            : const Icon(Icons.camera_alt),
+      ),
     );
   }
 
-  final supabase = Supabase.instance.client;
+  void takePicture() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+
+      final XFile? photo = await picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1280,
+        maxHeight: 720,
+        imageQuality: 91,
+        preferredCameraDevice: CameraDevice.rear,
+      );
+
+      if (photo != null) {
+        setState(() {
+          loading = true;
+        });
+        File file = File(photo.path);
+
+        String image =
+            'data:image/jpg;base64, ${base64Encode(file.readAsBytesSync())}';
+
+        var openai = await supabase.functions.invoke('openai', body: {
+          'image': image,
+          'is_outfit': false,
+        });
+
+        if (openai.data != null) {
+          if (openai.data['message'] == "NO ES UNA PRENDA DE VESTIR" ||
+              openai.data['message'] == "NO ES UNA PRENDA") {
+            setState(() {
+              loading = false;
+            });
+
+            print('No es una prenda de vestir');
+            return;
+          }
+
+          var embedding = await supabase.functions.invoke('embed', body: {
+            'input': openai.data['message'],
+          });
+
+          // generamos un uuid para la imagen
+          var uuid = const Uuid().v4();
+
+          // subimos la imagen a supabase usando el cliente de supabase en el bucket de images
+          await supabase.storage.from("images").upload(uuid, file);
+
+          await supabase
+              .from('clothings')
+              .insert({
+                'name': openai.data['name'],
+                'description': openai.data['message'],
+                'image': uuid,
+                'embedding': embedding.data ?? [],
+                'auth_user_id': supabase.auth.currentUser?.id,
+              })
+              .select()
+              .single();
+
+          setState(() {
+            loading = false;
+          });
+          getData();
+          print('Data inserted');
+        }
+      }
+    } catch (e) {
+      setState(() {
+        loading = false;
+      });
+      print("Error al subir la imagen");
+      print(e);
+    }
+  }
 
   Future<List<Clothing>> getData() async {
     try {
-      final response = await supabase.from('clothings').select('*');
+      final response = await supabase
+          .from('clothings')
+          .select('*')
+          .eq('auth_user_id', supabase.auth.currentUser?.id ?? '');
 
       final tempList = response as List;
 

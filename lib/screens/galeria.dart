@@ -3,8 +3,10 @@ import 'package:clothing_identifier/screens/clothing_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+final supabase = Supabase.instance.client;
+
 class GaleriaView extends StatelessWidget {
-  GaleriaView({super.key});
+  const GaleriaView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,9 +15,9 @@ class GaleriaView extends StatelessWidget {
         future: getData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error fetching data'));
+            return const Center(child: Text('Error fetching data'));
           } else {
             final clothing = snapshot.data!;
             return ListView.builder(
@@ -51,7 +53,7 @@ class GaleriaView extends StatelessWidget {
                       ),
                       title: Text(item.name ?? ''),
                       subtitle: Text(item.description ?? ''),
-                      trailing: Icon(Icons.favorite_border), 
+                      trailing: Icon(Icons.favorite_border),
                     ),
                   ),
                 );
@@ -63,11 +65,13 @@ class GaleriaView extends StatelessWidget {
     );
   }
 
-  final supabase = Supabase.instance.client;
-
   Future<List<Clothing>> getData() async {
+    print(supabase.auth.currentUser!.id);
     try {
-      final response = await supabase.from('clothings').select('*');
+      final response = await supabase
+          .from('clothings')
+          .select("*")
+          .eq('auth_user_id', supabase.auth.currentUser!.id);
 
       final tempList = response as List;
 
