@@ -18,7 +18,14 @@ class MyOutfitView extends StatefulWidget {
 }
 
 class _MyOutfitViewState extends State<MyOutfitView> {
+  late Future<List<Clothing>> _outfitsFuture;
+
   bool loading = false;
+  @override
+  void initState() {
+    super.initState();
+    _outfitsFuture = getData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,17 +52,29 @@ class _MyOutfitViewState extends State<MyOutfitView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(15.0),
-                            topRight: Radius.circular(15.0),
-                          ),
-                          child: SizedBox(
-                            height: 250,
-                            width: double.infinity,
-                            child: Image.network(
-                              item.image ?? '',
-                              fit: BoxFit.cover,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ClothingDatailView(
+                                  clothing: item,
+                                ),
+                              ),
+                            );
+                          },
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(15.0),
+                              topRight: Radius.circular(15.0),
+                            ),
+                            child: Container(
+                              height: 250,
+                              width: double.infinity,
+                              child: Image.network(
+                                item.image ?? '',
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
@@ -86,19 +105,25 @@ class _MyOutfitViewState extends State<MyOutfitView> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ClothingDatailView(clothing: item),
-                                    ),
-                                  );
-                                },
-                                child: const Icon(Icons.arrow_forward),
+                                onTap: () => deleteOutfit(item.id ?? -1),
+                                child: const Icon(Icons.delete),
                               ),
-                              const SizedBox(width: 8),
-                              const Icon(Icons.favorite_border),
+                              IconButton(
+                                onPressed: () async {
+                                  await supabase
+                                      .from('outfitsfavorites')
+                                      .insert({
+                                        'outfit_id': item.id,
+                                        'user_id':
+                                            supabase.auth.currentUser?.id,
+                                      })
+                                      .select()
+                                      .single();
+                                },
+                                icon: const Icon(
+                                  Icons.favorite_border,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -306,6 +331,21 @@ class _MyOutfitViewState extends State<MyOutfitView> {
       return tempList.map((e) => Clothing.fromJson(e)).toList();
     } catch (e) {
       return [];
+    }
+  }
+
+  Future<void> deleteOutfit(int id) async {
+    try {
+      await supabase.from('outfits').delete().eq('id', id);
+
+      setState(
+        () {
+          _outfitsFuture = getData();
+        },
+      );
+    } catch (e) {
+      print("Error al eliminar el outfit");
+      print(e);
     }
   }
 }

@@ -116,9 +116,11 @@ class _ClothingsFavoritesViewState extends State<ClothingsFavoritesView> {
                                           .eq('user_id',
                                               supabase.auth.currentUser!.id);
 
-                                      setState(() {
-                                        _favoritesFuture = getData();
-                                      });
+                                      setState(
+                                        () {
+                                          _favoritesFuture = getData();
+                                        },
+                                      );
                                     } catch (e) {
                                       print('Error removing favorite: $e');
                                     }
