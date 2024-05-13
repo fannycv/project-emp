@@ -5,14 +5,27 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 final supabase = Supabase.instance.client;
 
-class OutfitsFavoritesView extends StatelessWidget {
-  const OutfitsFavoritesView({super.key});
+class OutfitsFavoritesView extends StatefulWidget {
+  const OutfitsFavoritesView({Key? key}) : super(key: key);
+
+  @override
+  _OutfitsFavoritesViewState createState() => _OutfitsFavoritesViewState();
+}
+
+class _OutfitsFavoritesViewState extends State<OutfitsFavoritesView> {
+  late Future<List<Favorite>> _favoritesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _favoritesFuture = getData();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<List<Favorite>>(
-        future: getData(),
+        future: _favoritesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -58,17 +71,54 @@ class OutfitsFavoritesView extends StatelessWidget {
                           Positioned(
                             bottom: 5,
                             left: 15,
-                            child: Text(
-                              'Creado por @${item.user.username}',
-                              style: const TextStyle(
-                                  fontSize: 14, color: Colors.grey),
+                            child: Container(
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.person,
+                                      color: Colors.white, size: 18),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    'Creado por @${item.user.username}',
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.white),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           Positioned(
+                            top: 5,
                             right: 5,
-                            child: IconButton(
-                              onPressed: () {},
-                              icon: const Icon(Icons.favorite_border),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.black.withOpacity(0.5),
+                              ),
+                              child: IconButton(
+                                onPressed: () async {
+                                  try {
+                                    await supabase
+                                        .from('outfitsfavorites')
+                                        .delete()
+                                        .eq('outfit_id', item.clothing.id!)
+                                        .eq('user_id',
+                                            supabase.auth.currentUser!.id);
+
+                                    setState(() {
+                                      _favoritesFuture = getData();
+                                    });
+                                  } catch (e) {
+                                    print('Error removing favorite: $e');
+                                  }
+                                },
+                                icon: const Icon(Icons.favorite_rounded,
+                                    color: Colors.blueGrey),
+                              ),
                             ),
                           )
                         ],

@@ -3,6 +3,7 @@ class User {
   late final String? email;
   late final String? username;
   late final bool? isCompany;
+  
 
   User({
     this.id,

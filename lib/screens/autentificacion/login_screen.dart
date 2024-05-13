@@ -18,6 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController passwordController = TextEditingController();
 
+  bool isPasswordVisible = false;
+
   @override
   void initState() {
     setupAuthListener();
@@ -44,6 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const SizedBox(height: 40),
             Image.asset(
               'assets/images/inicio5.png',
               height: 200,
@@ -54,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'VISION8',
                     style: TextStyle(
                       fontFamily: 'Poppins',
@@ -63,12 +66,60 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            try {
+                              await Supabase.instance.client.auth
+                                  .signInWithOAuth(
+                                OAuthProvider.google,
+                                redirectTo: kIsWeb
+                                    ? null
+                                    : "io.supabase.clothingidentifierapp://login-callback/",
+                              );
+                            } catch (_) {}
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                              side: const BorderSide(color: Colors.blue),
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 16,
+                                  backgroundImage: NetworkImage(
+                                      'https://static.vecteezy.com/system/resources/previews/022/613/027/non_2x/google-icon-logo-symbol-free-png.png'), // URL de tu imagen
+                                ),
+                                SizedBox(
+                                    width:
+                                        10), // Espaciado entre la imagen y el texto
+                                Text(
+                                  "Iniciar Sesión con Google",
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.blue),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
                   TextFormField(
                     controller: emailController,
                     decoration: InputDecoration(
                       labelText: 'Correo Electrónico',
-                      prefixIcon: Icon(
+                      prefixIcon: const Icon(
                         Icons.email,
                         color: Colors.grey,
                       ),
@@ -77,24 +128,28 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextFormField(
                     controller: passwordController,
-                    obscureText: true,
+                    obscureText: !isPasswordVisible,
+                    keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                       labelText: 'Contraseña',
-                      prefixIcon: Icon(
+                      prefixIcon: const Icon(
                         Icons.lock,
                         color: Colors.grey,
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          Icons.visibility,
+                          isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                           color: Colors.grey,
                         ),
                         onPressed: () {
-                          // Cambiar la visibilidad de la contraseña
-                          passwordController.clear();
+                          setState(() {
+                            isPasswordVisible = !isPasswordVisible;
+                          });
                         },
                       ),
                       border: OutlineInputBorder(
@@ -102,14 +157,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () async {
                         if (emailController.text.isEmpty ||
                             passwordController.text.isEmpty) {
-                          // Mostrar alerta si los campos están vacíos
                           _showAlertDialog(
                             context,
                             'Campos Vacíos',
@@ -125,14 +179,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
 
                         if (response.user == null) {
-                          // Mostrar alerta si las credenciales no son correctas
                           _showAlertDialog(
                             context,
                             'Credenciales Incorrectas',
                             'El correo electrónico o la contraseña son incorrectos.',
                           );
                         } else {
-                          // Navigate to another page upon successful login
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -157,18 +209,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  ElevatedButton(
-                      onPressed: () async {
-                        try {
-                          await Supabase.instance.client.auth.signInWithOAuth(
-                            OAuthProvider.google,
-                            redirectTo: kIsWeb
-                                ? null
-                                : "io.supabase.clothingidentifierapp://login-callback/",
-                          );
-                        } catch (_) {}
-                      },
-                      child: const Text("google")),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(

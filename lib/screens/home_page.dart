@@ -18,14 +18,14 @@ class WelcomePage extends StatelessWidget {
           Positioned.fill(
             child: CarouselSlider(
               items: [
-                
-                'assets/images/inicio8.jpeg',
-                'assets/images/inicio9.jpg',
-                'assets/images/inicio6.png',
+                'assets/images/i1.jpeg',
+                'assets/images/i2.jpeg',
+                'assets/images/i3.jpeg',
+                'assets/images/i4.jpeg',
               ].map((imagePath) {
                 return Image.asset(
                   imagePath,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 );
               }).toList(),
               options: CarouselOptions(
@@ -46,10 +46,10 @@ class WelcomePage extends StatelessWidget {
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height *
-                    0.55, // Ajusta la altura de la parte inferior
+                    0.45, // Ajusta la altura de la parte inferior
                 color: Colors.white, // Puedes cambiar el color de fondo
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 130, left: 20, right: 20),
+                  padding: const EdgeInsets.only(top: 75, left: 20, right: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -63,14 +63,14 @@ class WelcomePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       const Text(
-                        'Explora y crea tu estilo con Vision8: encuentra prendas únicas y descubre opciones similares para looks perfectos',
+                        'Explora y crea tu estilo con VISION8: encuentra prendas únicas y descubre opciones similares para looks perfectos',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black,
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 20),
                       // Botón de flecha
                       GestureDetector(
                         onTap: () {
@@ -92,7 +92,7 @@ class WelcomePage extends StatelessWidget {
                               height: 50,
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: const Color.fromARGB(255, 139, 142, 144),
+                                color:  Color.fromARGB(255, 139, 142, 144),
                               ),
                               child: const Center(
                                 child: Icon(
@@ -122,9 +122,9 @@ class MyClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     final path = Path();
     path.moveTo(
-        0, size.height * 0.35); // Comienza desde la esquina inferior izquierda
+        0, size.height * 0.25); // Comienza desde la esquina inferior izquierda
     path.quadraticBezierTo(size.width / 2, 0, size.width,
-        size.height * 0.35); // Curva hacia la esquina inferior derecha
+        size.height * 0.25); // Curva hacia la esquina inferior derecha
     path.lineTo(
         size.width, size.height); // Línea hacia la esquina superior derecha
     path.lineTo(0, size.height); // Línea hacia la esquina superior izquierda

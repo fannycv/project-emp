@@ -14,7 +14,7 @@ class ClothingDatailView extends StatelessWidget {
           'Clothing Detail',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: const Color.fromRGBO(36, 36, 36, 1),
+        backgroundColor:  Colors.black,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(

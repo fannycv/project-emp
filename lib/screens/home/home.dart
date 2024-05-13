@@ -1,9 +1,11 @@
 import 'package:clothing_identifier/screens/galeria.dart';
 import 'package:clothing_identifier/screens/home/tabs.dart';
+import 'package:clothing_identifier/screens/home_page.dart';
 import 'package:clothing_identifier/screens/my_uploads/my_uploads.dart';
+import 'package:clothing_identifier/screens/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:clothing_identifier/screens/favoritos/favoritos.dart';
-import 'package:clothing_identifier/screens/clothing.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -16,11 +18,35 @@ class _HomeViewState extends State<HomeView> {
   int _selectedIndex = 0;
   final List<Widget> _tabs = [
     const InicioView(),
-    const FavoritesPage(),
     const MyUploadView(),
+    const FavoritesPage(),
     const GaleriaView(),
-    ClothingView(),
   ];
+  String _username = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData(); // Cargar datos del usuario al iniciar
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      final response = await Supabase.instance.client
+          .from('users')
+          .select('username')
+          .eq('id', user!.id)
+          .single();
+
+      setState(() {
+        _username = response['username'] ??
+            'Nombre de Usuario'; 
+      });
+    } catch (e) {
+      print('Error al cargar datos del usuario: $e');
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -34,23 +60,14 @@ class _HomeViewState extends State<HomeView> {
       backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
-          'VISION8',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: const Color.fromRGBO(36, 36, 36, 1),
+        backgroundColor: Colors.black,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: <Widget>[
           InkWell(
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ClothingView()),
+                MaterialPageRoute(builder: (context) => PerfilView()),
               );
             },
             child: const Padding(
@@ -78,20 +95,16 @@ class _HomeViewState extends State<HomeView> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favoritos',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.camera_alt_rounded),
             label: 'Cámara',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.browse_gallery),
-            label: 'Galeria',
+            icon: Icon(Icons.favorite),
+            label: 'Favoritos',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
+            icon: Icon(Icons.image),
+            label: 'Galeria',
           ),
         ],
       ),
@@ -99,44 +112,58 @@ class _HomeViewState extends State<HomeView> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.white,
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: Colors.black,
               ),
-              child: Text(
-                'TourBuddy',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      'https://images.unsplash.com/photo-1515621061946-eff1c2a352bd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1089&q=80',
+                    ),
+                    radius: 30,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    _username,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
             ListTile(
               leading: const Icon(Icons.home),
               title: const Text('Home'),
               onTap: () {
+                _onItemTapped(0);
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.card_travel),
-              title: const Text('Recursos'),
+              leading: const Icon(Icons.camera_alt_rounded),
+              title: const Text('Cámara'),
               onTap: () {
                 _onItemTapped(1);
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.travel_explore),
-              title: const Text('Recomendaciones'),
+              leading: const Icon(Icons.favorite),
+              title: const Text('Favoritos'),
               onTap: () {
                 _onItemTapped(2);
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.favorite),
-              title: const Text('Favoritos'),
+              leading: const Icon(Icons.image),
+              title: const Text('Galeria'),
               onTap: () {
                 _onItemTapped(3);
                 Navigator.pop(context);
@@ -149,7 +176,7 @@ class _HomeViewState extends State<HomeView> {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ClothingView()),
+                  MaterialPageRoute(builder: (context) => PerfilView()),
                 );
               },
             ),
@@ -157,7 +184,11 @@ class _HomeViewState extends State<HomeView> {
               leading: const Icon(Icons.logout),
               title: const Text('Cerrar Sesión'),
               onTap: () async {
-                // Implementa aquí el cierre de sesión
+                await Supabase.instance.client.auth.signOut();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => WelcomePage()),
+                );
               },
             ),
           ],

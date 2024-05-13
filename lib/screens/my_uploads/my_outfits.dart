@@ -111,16 +111,37 @@ class _MyOutfitViewState extends State<MyOutfitView> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: loading
-            ? null
-            : () {
-                takePicture();
-              },
-        tooltip: 'Tomar foto',
-        child: loading
-            ? const CircularProgressIndicator()
-            : const Icon(Icons.camera_alt),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: loading
+                ? null
+                : () {
+                    takePicture();
+                  },
+            tooltip: 'Tomar foto',
+            backgroundColor: Colors.black, // Color del fondo del botón
+            foregroundColor: Colors.white, // Color del icono
+            child: loading
+                ? const CircularProgressIndicator()
+                : const Icon(Icons.camera_alt),
+          ),
+          const SizedBox(width: 16), // Espacio entre los botones flotantes
+          FloatingActionButton(
+            onPressed: loading
+                ? null
+                : () {
+                    selectFile();
+                  },
+            tooltip: 'Seleccionar archivo',
+            backgroundColor: Colors.black, // Color del fondo del botón
+            foregroundColor: Colors.white, // Color del icono
+            child: loading
+                ? const CircularProgressIndicator()
+                : const Icon(Icons.attach_file),
+          ),
+        ],
       ),
     );
   }
@@ -196,6 +217,79 @@ class _MyOutfitViewState extends State<MyOutfitView> {
         loading = false;
       });
       print("Error al subir la imagen");
+      print(e);
+    }
+  }
+
+  void selectFile() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+
+      final XFile? pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1280,
+        maxHeight: 720,
+        imageQuality: 91,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          loading = true;
+        });
+
+        File file = File(pickedFile.path);
+
+        String image =
+            'data:image/jpg;base64, ${base64Encode(file.readAsBytesSync())}';
+
+        var openai = await supabase.functions.invoke('openai', body: {
+          'image': image,
+          'is_outfit': true,
+        });
+
+        if (openai.data != null) {
+          if (openai.data['message'] == "NO ES UNA PRENDA DE VESTIR" ||
+              openai.data['message'] == "NO ES UN OUTFIT COMPLETO") {
+            setState(() {
+              loading = false;
+            });
+
+            print('No es un outfit completo');
+            return;
+          }
+
+          var embedding = await supabase.functions.invoke('embed', body: {
+            'input': openai.data['message'],
+          });
+
+          var uuid = Uuid().v4();
+
+          await supabase.storage.from("images").upload(uuid, file);
+
+          await supabase
+              .from('outfits')
+              .insert({
+                'name': openai.data['name'],
+                'description': openai.data['message'],
+                'image': uuid,
+                'embedding': embedding.data ?? [],
+                'auth_user_id': supabase.auth.currentUser?.id,
+              })
+              .select()
+              .single();
+
+          setState(() {
+            loading = false;
+          });
+          getData();
+          print('Datos insertados');
+        }
+      }
+    } catch (e) {
+      setState(() {
+        loading = false;
+      });
+      print("Error al seleccionar el archivo");
       print(e);
     }
   }

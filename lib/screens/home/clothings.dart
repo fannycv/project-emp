@@ -1,7 +1,6 @@
 import 'package:clothing_identifier/models/clothing.dart';
 import 'package:clothing_identifier/screens/clothing_detail.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ClothingsView extends StatelessWidget {
@@ -57,26 +56,54 @@ class ClothingsView extends StatelessWidget {
                           Positioned(
                             bottom: 5,
                             left: 15,
-                            child: Text(
-                              'Creado por @${item.user?.username}',
-                              style: const TextStyle(
-                                  fontSize: 14, color: Colors.grey),
+                            child: Container(
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.person,
+                                      color: Colors.white, size: 18),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    'Creado por @${item.user?.username}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           Positioned(
+                            top: 5,
                             right: 5,
-                            child: IconButton(
-                              onPressed: () async {
-                                await supabase
-                                    .from('clothingfavorites')
-                                    .insert({
-                                      'clothing_id': item.id,
-                                      'user_id': supabase.auth.currentUser?.id,
-                                    })
-                                    .select()
-                                    .single();
-                              },
-                              icon: const Icon(Icons.favorite_border),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: IconButton(
+                                onPressed: () async {
+                                  await supabase
+                                      .from('clothingfavorites')
+                                      .insert({
+                                        'clothing_id': item.id,
+                                        'user_id':
+                                            supabase.auth.currentUser?.id,
+                                      })
+                                      .select()
+                                      .single();
+                                },
+                                icon: const Icon(
+                                  Icons.favorite_border,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
                             ),
                           )
                         ],
