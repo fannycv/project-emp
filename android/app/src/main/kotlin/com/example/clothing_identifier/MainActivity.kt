@@ -1,4 +1,4 @@
-package com.example.clothing_identifier
+package com.appfcv.vision8
 
 import io.flutter.embedding.android.FlutterActivity
 

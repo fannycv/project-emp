@@ -1,5 +1,5 @@
 import 'package:clothing_identifier/screens/home/tabs.dart';
-import 'package:clothing_identifier/screens/home_page.dart';
+import 'package:clothing_identifier/screens/welcome_page.dart';
 import 'package:clothing_identifier/screens/my_uploads/my_uploads.dart';
 import 'package:clothing_identifier/screens/profile/profile.dart';
 import 'package:flutter/material.dart';

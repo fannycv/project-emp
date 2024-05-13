@@ -1,4 +1,4 @@
-import 'package:clothing_identifier/screens/home_page.dart';
+import 'package:clothing_identifier/screens/welcome_page.dart';
 import 'package:clothing_identifier/screens/profile/editProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:clothing_identifier/models/favorite.dart';

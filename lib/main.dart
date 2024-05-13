@@ -1,5 +1,5 @@
 import 'package:clothing_identifier/screens/home/home.dart';
-import 'package:clothing_identifier/screens/home_page.dart';
+import 'package:clothing_identifier/screens/welcome_page.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
