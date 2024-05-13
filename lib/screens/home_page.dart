@@ -18,7 +18,7 @@ class WelcomePage extends StatelessWidget {
           Positioned.fill(
             child: CarouselSlider(
               items: [
-                'assets/images/in1.jpeg',
+                'assets/images/i1.jpeg',
                 'assets/images/i2.jpeg',
                 'assets/images/i3.jpeg',
                 'assets/images/i4.jpeg',
