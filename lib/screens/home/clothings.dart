@@ -3,25 +3,45 @@ import 'package:clothing_identifier/screens/clothing_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ClothingsView extends StatelessWidget {
-  ClothingsView({super.key});
+final supabase = Supabase.instance.client;
+
+class ClothingsView extends StatefulWidget {
+  const ClothingsView({super.key});
+
+  @override
+  State<ClothingsView> createState() => _ClothingsViewState();
+}
+
+class _ClothingsViewState extends State<ClothingsView> {
+  late Future<List<Clothing>> dataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    dataFuture = getData();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<List<Clothing>>(
-        future: getData(),
+        future: dataFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              !snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return const Center(child: Text('Error fetching data'));
           } else {
             final clothing = snapshot.data!;
+
             return ListView.builder(
               itemCount: clothing.length,
               itemBuilder: (context, index) {
                 final item = clothing[index];
+
+                bool isFavorite =
+                    item.isFavorite(supabase.auth.currentUser?.id ?? '');
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
@@ -88,19 +108,34 @@ class ClothingsView extends StatelessWidget {
                               ),
                               child: IconButton(
                                 onPressed: () async {
-                                  await supabase
-                                      .from('clothingfavorites')
-                                      .insert({
-                                        'clothing_id': item.id,
-                                        'user_id':
-                                            supabase.auth.currentUser?.id,
-                                      })
-                                      .select()
-                                      .single();
+                                  if (isFavorite) {
+                                    await supabase
+                                        .from('clothingfavorites')
+                                        .delete()
+                                        .eq('clothing_id', item.id ?? '')
+                                        .eq(
+                                            'user_id',
+                                            supabase.auth.currentUser?.id ??
+                                                '');
+                                  } else {
+                                    await supabase
+                                        .from('clothingfavorites')
+                                        .insert({
+                                          'clothing_id': item.id,
+                                          'user_id':
+                                              supabase.auth.currentUser?.id,
+                                        })
+                                        .select()
+                                        .single();
+                                  }
+
+                                  refreshData();
                                 },
-                                icon: const Icon(
-                                  Icons.favorite_border,
-                                  color: Colors.white,
+                                icon: Icon(
+                                  isFavorite
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: isFavorite ? Colors.red : Colors.white,
                                   size: 20,
                                 ),
                               ),
@@ -119,14 +154,18 @@ class ClothingsView extends StatelessWidget {
     );
   }
 
-  final supabase = Supabase.instance.client;
+  Future<void> refreshData() async {
+    setState(() {
+      dataFuture = getData();
+    });
+  }
 
   Future<List<Clothing>> getData() async {
     try {
-      final response = await supabase
-          .from('clothings')
-          .select('*, user:users(*)')
-          .order('id', ascending: false);
+      final response = await supabase.from('clothings').select(
+        '''*, 
+        user:users(*), favorites:clothingfavorites(*)''',
+      ).order('id', ascending: false);
 
       final tempList = response as List;
 

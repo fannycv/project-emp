@@ -1,3 +1,4 @@
+import 'package:clothing_identifier/models/favorite.dart';
 import 'package:clothing_identifier/models/user.dart';
 
 class Clothing {
@@ -9,6 +10,7 @@ class Clothing {
   late final String? category;
   late final String? embedding;
   late final User? user;
+  late final List<Favorite> favorites;
 
   Clothing({
     this.id,
@@ -19,10 +21,17 @@ class Clothing {
     this.category,
     this.embedding,
     this.user,
+    this.favorites = const [],
   });
 
 // from json using factory constructor
   factory Clothing.fromJson(Map<String, dynamic> json) {
+    List<Favorite> favorites = json['favorites'] != null
+        ? List<Favorite>.from(
+            json['favorites'].map((x) => Favorite.fromJson(x)),
+          )
+        : [];
+
     return Clothing(
       id: json['id'],
       name: json['name'],
@@ -32,6 +41,7 @@ class Clothing {
       category: json['category'],
       embedding: json['embedding'],
       user: json['user'] != null ? User.fromJson(json['user']) : null,
+      favorites: favorites,
     );
   }
 
@@ -45,6 +55,10 @@ class Clothing {
       'category': category,
       'embedding': embedding,
     };
+  }
+
+  bool isFavorite(String userId) {
+    return favorites.any((element) => element.userId == userId);
   }
 
   static String getImageUrl(String path) {

@@ -5,7 +5,7 @@ import 'package:clothing_identifier/models/favorite.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PerfilView extends StatelessWidget {
-  const PerfilView({Key? key}) : super(key: key);
+  const PerfilView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +68,7 @@ class PerfilView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Positioned(
+                    const Positioned(
                       bottom: -50,
                       left: 20,
                       child: CircleAvatar(
@@ -139,7 +139,8 @@ class PerfilView extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => EditProfileView()),
+                      MaterialPageRoute(
+                          builder: (context) => EditProfileView()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -165,7 +166,7 @@ class PerfilView extends StatelessWidget {
                   future: getData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
                     if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
@@ -173,14 +174,15 @@ class PerfilView extends StatelessWidget {
 
                     final favorites = snapshot.data!;
                     return GridView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         crossAxisSpacing: 4.0,
                         mainAxisSpacing: 4.0,
                       ),
                       itemCount: favorites.length,
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
                       itemBuilder: (context, index) {
                         final favorite = favorites[index];
                         return Card(
@@ -189,7 +191,7 @@ class PerfilView extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Image.network(
-                            favorite.clothing.image ?? '',
+                            favorite.clothing?.image ?? '',
                             fit: BoxFit.cover,
                           ),
                         );
@@ -229,7 +231,6 @@ class PerfilView extends StatelessWidget {
           .select('*, user:users(*), clothing:outfits(*)')
           .eq('user_id', supabase.auth.currentUser?.id ?? '')
           .order('id', ascending: false);
-
 
       final tempList = response as List;
       return tempList.map((e) => Favorite.fromJson(e)).toList();

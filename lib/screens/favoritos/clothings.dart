@@ -6,7 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 final supabase = Supabase.instance.client;
 
 class ClothingsFavoritesView extends StatefulWidget {
-  const ClothingsFavoritesView({Key? key}) : super(key: key);
+  const ClothingsFavoritesView({super.key});
 
   @override
   _ClothingsFavoritesViewState createState() => _ClothingsFavoritesViewState();
@@ -51,7 +51,7 @@ class _ClothingsFavoritesViewState extends State<ClothingsFavoritesView> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ClothingDatailView(
-                              clothing: item.clothing,
+                              clothing: item.clothing!,
                             ),
                           ),
                         );
@@ -70,7 +70,7 @@ class _ClothingsFavoritesViewState extends State<ClothingsFavoritesView> {
                                 height: 250,
                                 width: double.infinity,
                                 child: Image.network(
-                                  item.clothing.image ?? '',
+                                  item.clothing?.image ?? '',
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -90,7 +90,7 @@ class _ClothingsFavoritesViewState extends State<ClothingsFavoritesView> {
                                         color: Colors.white, size: 18),
                                     const SizedBox(width: 5),
                                     Text(
-                                      'Creado por @${item.user.username}',
+                                      'Creado por @${item.user?.username}',
                                       style: const TextStyle(
                                           fontSize: 14, color: Colors.white),
                                     ),
@@ -112,7 +112,7 @@ class _ClothingsFavoritesViewState extends State<ClothingsFavoritesView> {
                                       await supabase
                                           .from('clothingfavorites')
                                           .delete()
-                                          .eq('clothing_id', item.clothing.id!)
+                                          .eq('clothing_id', item.clothing!.id!)
                                           .eq('user_id',
                                               supabase.auth.currentUser!.id);
 

@@ -45,7 +45,7 @@ class _OutfitsFavoritesViewState extends State<OutfitsFavoritesView> {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              OutfitDatailView(clothing: item.clothing),
+                              OutfitDatailView(clothing: item.clothing!),
                         ),
                       );
                     },
@@ -63,7 +63,7 @@ class _OutfitsFavoritesViewState extends State<OutfitsFavoritesView> {
                               height: 250,
                               width: double.infinity,
                               child: Image.network(
-                                item.clothing.image ?? '',
+                                item.clothing?.image ?? '',
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -83,7 +83,7 @@ class _OutfitsFavoritesViewState extends State<OutfitsFavoritesView> {
                                       color: Colors.white, size: 18),
                                   const SizedBox(width: 5),
                                   Text(
-                                    'Creado por @${item.user.username}',
+                                    'Creado por @${item.user?.username}',
                                     style: const TextStyle(
                                         fontSize: 14, color: Colors.white),
                                   ),
@@ -105,7 +105,7 @@ class _OutfitsFavoritesViewState extends State<OutfitsFavoritesView> {
                                     await supabase
                                         .from('outfitsfavorites')
                                         .delete()
-                                        .eq('outfit_id', item.clothing.id!)
+                                        .eq('outfit_id', item.clothing!.id!)
                                         .eq('user_id',
                                             supabase.auth.currentUser!.id);
 
