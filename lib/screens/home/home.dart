@@ -1,4 +1,3 @@
-import 'package:clothing_identifier/screens/galeria.dart';
 import 'package:clothing_identifier/screens/home/tabs.dart';
 import 'package:clothing_identifier/screens/home_page.dart';
 import 'package:clothing_identifier/screens/my_uploads/my_uploads.dart';
@@ -20,7 +19,6 @@ class _HomeViewState extends State<HomeView> {
     const InicioView(),
     const MyUploadView(),
     const FavoritesPage(),
-    const GaleriaView(),
   ];
   String _username = '';
 
@@ -40,8 +38,7 @@ class _HomeViewState extends State<HomeView> {
           .single();
 
       setState(() {
-        _username = response['username'] ??
-            'Nombre de Usuario'; 
+        _username = response['username'] ?? 'Nombre de Usuario';
       });
     } catch (e) {
       print('Error al cargar datos del usuario: $e');
@@ -102,10 +99,6 @@ class _HomeViewState extends State<HomeView> {
             icon: Icon(Icons.favorite),
             label: 'Favoritos',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.image),
-            label: 'Galeria',
-          ),
         ],
       ),
       drawer: Drawer(
@@ -158,14 +151,6 @@ class _HomeViewState extends State<HomeView> {
               title: const Text('Favoritos'),
               onTap: () {
                 _onItemTapped(2);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.image),
-              title: const Text('Galeria'),
-              onTap: () {
-                _onItemTapped(3);
                 Navigator.pop(context);
               },
             ),

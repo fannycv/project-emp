@@ -171,7 +171,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                                     radius: 60,
                                     backgroundColor: Colors.white,
                                     backgroundImage: NetworkImage(
-                                      'https://i.pinimg.com/474x/23/4b/9e/234b9ee3d4e06c991c5f1b18fdc20bde.jpg',
+                                      'https://images.unsplash.com/photo-1515621061946-eff1c2a352bd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1089&q=80',
                                     ),
                                   ),
                           ),
