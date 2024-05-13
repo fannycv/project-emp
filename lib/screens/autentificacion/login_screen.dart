@@ -1,14 +1,42 @@
-import 'dart:io';
-
 import 'package:clothing_identifier/screens/home/home.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'register_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+final supabase = Supabase.instance.client;
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
+
   final TextEditingController passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    setupAuthListener();
+
+    super.initState();
+  }
+
+  void setupAuthListener() {
+    supabase.auth.onAuthStateChange.listen((data) {
+      final event = data.event;
+      if (event == AuthChangeEvent.signedIn) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const HomeView(),
+          ),
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,8 +147,8 @@ class LoginScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 15.0),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15.0),
                         child: Text(
                           'Iniciar Sesión',
                           style: TextStyle(fontSize: 18, color: Colors.white),
@@ -128,43 +156,17 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                       onPressed: () async {
-                        print("Google");
-                        // final GoogleSignIn googleSignIn = GoogleSignIn();
-                        // final googleUser = await googleSignIn.signIn();
-                        // final googleAuth = await googleUser!.authentication;
-                        // final accessToken = googleAuth.accessToken;
-                        // final idToken = googleAuth.idToken;
-
-                        // if (accessToken == null) {
-                        //   throw 'No Access Token found.';
-                        // }
-                        // if (idToken == null) {
-                        //   throw 'No ID Token found.';
-                        // }
                         try {
-                          var s = await Supabase.instance.client.auth
-                              .signInWithOAuth(
+                          await Supabase.instance.client.auth.signInWithOAuth(
                             OAuthProvider.google,
-
                             redirectTo: kIsWeb
                                 ? null
                                 : "io.supabase.clothingidentifierapp://login-callback/",
-                            // authScreenLaunchMode: LaunchMode.externalApplication,
-                            // queryParams: {
-                            //   "redirect_to":
-                            //       "io.supabase.clothingidentifierapp://login-callback/"
-                            // }
-                            // idToken: idToken,
-                            // accessToken: accessToken,
                           );
-
-                          print(s);
-                        } catch (e) {
-                          print(e);
-                        }
+                        } catch (_) {}
                       },
                       child: const Text("google")),
                   GestureDetector(
@@ -175,7 +177,7 @@ class LoginScreen extends StatelessWidget {
                             builder: (context) => RegisterScreen()),
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       '¿No tienes una cuenta? Regístrate aquí',
                       style: TextStyle(
                         fontSize: 16,

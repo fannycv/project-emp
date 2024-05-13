@@ -1,7 +1,10 @@
+import 'package:clothing_identifier/screens/home/home.dart';
 import 'package:clothing_identifier/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+final supabase = Supabase.instance.client;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,15 +13,12 @@ void main() async {
   await Supabase.initialize(
     url: 'https://sjesvwkkdmyqbxijrmgy.supabase.co',
     anonKey: dotenv.env['API_KEY'] ?? '',
-    // debug: true,
-    // authOptions:
-    //     const FlutterAuthClientOptions(authFlowType: AuthFlowType.implicit),
-    // storageOptions: const StorageClientOptions(retryAttempts: 10),
-    // realtimeClientOptions: const RealtimeClientOptions(
-    //   logLevel: RealtimeLogLevel.info,
-    // ),
+    debug: true,
+    storageOptions: const StorageClientOptions(retryAttempts: 10),
   );
-  runApp(const MyApp());
+  runApp(
+    const MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -33,7 +33,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: WelcomePage(),
+      home:
+          supabase.auth.currentUser == null ? WelcomePage() : const HomeView(),
     );
   }
 }
