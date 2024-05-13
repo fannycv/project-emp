@@ -30,8 +30,9 @@ class OutfitsView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              OutfitDatailView(clothing: item),
+                          builder: (context) => OutfitDatailView(
+                            clothing: item,
+                          ),
                         ),
                       );
                     },
@@ -66,7 +67,16 @@ class OutfitsView extends StatelessWidget {
                           Positioned(
                             right: 5,
                             child: IconButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                await supabase
+                                    .from('outfitsfavorites')
+                                    .insert({
+                                      'outfit_id': item.id,
+                                      'user_id': supabase.auth.currentUser?.id,
+                                    })
+                                    .select()
+                                    .single();
+                              },
                               icon: const Icon(Icons.favorite_border),
                             ),
                           )

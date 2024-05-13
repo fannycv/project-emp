@@ -16,7 +16,7 @@ class _HomeViewState extends State<HomeView> {
   int _selectedIndex = 0;
   final List<Widget> _tabs = [
     const InicioView(),
-    FavoritesPage(),
+    const FavoritesPage(),
     const MyUploadView(),
     const GaleriaView(),
     ClothingView(),

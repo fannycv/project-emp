@@ -1,16 +1,17 @@
-import 'package:clothing_identifier/models/clothing.dart';
+import 'package:clothing_identifier/models/favorite.dart';
 import 'package:clothing_identifier/screens/clothing_detail.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ClothingsView extends StatelessWidget {
-  ClothingsView({super.key});
+final supabase = Supabase.instance.client;
+
+class ClothingsFavoritesView extends StatelessWidget {
+  const ClothingsFavoritesView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<List<Clothing>>(
+      body: FutureBuilder<List<Favorite>>(
         future: getData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -31,7 +32,7 @@ class ClothingsView extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              ClothingDatailView(clothing: item),
+                              ClothingDatailView(clothing: item.clothing),
                         ),
                       );
                     },
@@ -49,7 +50,7 @@ class ClothingsView extends StatelessWidget {
                               height: 250,
                               width: double.infinity,
                               child: Image.network(
-                                item.image ?? '',
+                                item.clothing.image ?? '',
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -58,7 +59,7 @@ class ClothingsView extends StatelessWidget {
                             bottom: 5,
                             left: 15,
                             child: Text(
-                              'Creado por @${item.user?.username}',
+                              'Creado por @${item.user.username}',
                               style: const TextStyle(
                                   fontSize: 14, color: Colors.grey),
                             ),
@@ -66,16 +67,7 @@ class ClothingsView extends StatelessWidget {
                           Positioned(
                             right: 5,
                             child: IconButton(
-                              onPressed: () async {
-                                await supabase
-                                    .from('clothingfavorites')
-                                    .insert({
-                                      'clothing_id': item.id,
-                                      'user_id': supabase.auth.currentUser?.id,
-                                    })
-                                    .select()
-                                    .single();
-                              },
+                              onPressed: () {},
                               icon: const Icon(Icons.favorite_border),
                             ),
                           )
@@ -92,18 +84,16 @@ class ClothingsView extends StatelessWidget {
     );
   }
 
-  final supabase = Supabase.instance.client;
-
-  Future<List<Clothing>> getData() async {
+  Future<List<Favorite>> getData() async {
     try {
       final response = await supabase
-          .from('clothings')
-          .select('*, user:users(*)')
+          .from('clothingfavorites')
+          .select('*, user:users(*), clothing:clothings(*)')
           .order('id', ascending: false);
 
       final tempList = response as List;
 
-      return tempList.map((e) => Clothing.fromJson(e)).toList();
+      return tempList.map((e) => Favorite.fromJson(e)).toList();
     } catch (e) {
       return [];
     }
