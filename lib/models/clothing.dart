@@ -1,3 +1,5 @@
+import 'package:clothing_identifier/models/user.dart';
+
 class Clothing {
   late final int? id;
   late final String? name;
@@ -6,6 +8,7 @@ class Clothing {
   late final double? price;
   late final String? category;
   late final String? embedding;
+  late final User? user;
 
   Clothing({
     this.id,
@@ -15,6 +18,7 @@ class Clothing {
     this.price,
     this.category,
     this.embedding,
+    this.user,
   });
 
 // from json using factory constructor
@@ -27,6 +31,7 @@ class Clothing {
       price: json['price'],
       category: json['category'],
       embedding: json['embedding'],
+      user: json['user'] != null ? User.fromJson(json['user']) : null,
     );
   }
 

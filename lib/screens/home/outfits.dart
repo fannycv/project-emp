@@ -24,71 +24,53 @@ class OutfitsView extends StatelessWidget {
                 final item = clothing[index];
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(15.0),
-                            topRight: Radius.circular(15.0),
-                          ),
-                          child: Container(
-                            height: 250,
-                            width: double.infinity,
-                            child: Image.network(
-                              item.image ?? '',
-                              fit: BoxFit.cover,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ClothingDatailView(clothing: item),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      elevation: 0.1,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20.0)),
+                            child: SizedBox(
+                              height: 250,
+                              width: double.infinity,
+                              child: Image.network(
+                                item.image ?? '',
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                item.name ?? '',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                '${item.description}',
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.grey),
-                              ),
-                            ],
+                          Positioned(
+                            bottom: 5,
+                            left: 15,
+                            child: Text(
+                              'Creado por @${item.user?.username}',
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.grey),
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ClothingDatailView(clothing: item),
-                                    ),
-                                  );
-                                },
-                                child: Icon(Icons.arrow_forward),
-                              ),
-                              const SizedBox(width: 8),
-                              Icon(Icons.favorite_border),
-                            ],
-                          ),
-                        ),
-                      ],
+                          Positioned(
+                            right: 5,
+                            child: IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.favorite_border),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -104,7 +86,10 @@ class OutfitsView extends StatelessWidget {
 
   Future<List<Clothing>> getData() async {
     try {
-      final response = await supabase.from('outfits').select('*');
+      final response = await supabase
+          .from('outfits')
+          .select('*, user:users(*)')
+          .order('id', ascending: false);
 
       final tempList = response as List;
 
