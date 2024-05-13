@@ -1,5 +1,6 @@
 import 'package:clothing_identifier/models/clothing.dart';
 import 'package:clothing_identifier/screens/clothing_detail.dart';
+import 'package:clothing_identifier/screens/outfit_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -30,7 +31,7 @@ class OutfitsView extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              ClothingDatailView(clothing: item),
+                              OutfitDatailView(clothing: item),
                         ),
                       );
                     },

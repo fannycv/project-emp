@@ -2,8 +2,8 @@ import 'package:clothing_identifier/models/clothing.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ClothingDatailView extends StatelessWidget {
-  ClothingDatailView({super.key, required this.clothing});
+class OutfitDatailView extends StatelessWidget {
+  OutfitDatailView({super.key, required this.clothing});
   final Clothing clothing;
 
   @override
@@ -11,7 +11,7 @@ class ClothingDatailView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Clothing Detail',
+          'Outfit Detail',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color.fromRGBO(36, 36, 36, 1),
@@ -69,8 +69,7 @@ class ClothingDatailView extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            ClothingDatailView(clothing: item),
+                        builder: (context) => OutfitDatailView(clothing: item),
                       ),
                     );
                   },
@@ -112,7 +111,7 @@ class ClothingDatailView extends StatelessWidget {
   Future<List<Clothing>> getData(Clothing item) async {
     try {
       final response = await supabase.rpc(
-        'match_clothings',
+        'match_outfits',
         params: {
           "query_embedding": item.embedding,
           "match_threshold": 0.89,
