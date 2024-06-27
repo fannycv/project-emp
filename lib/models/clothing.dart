@@ -10,6 +10,8 @@ class Clothing {
   late final String? category;
   late final String? embedding;
   late final User? user;
+  late final String?  external_link;
+  late final bool? is_public;
   late final List<Favorite> favorites;
 
   Clothing({
@@ -21,6 +23,8 @@ class Clothing {
     this.category,
     this.embedding,
     this.user,
+    this.external_link,
+    this.is_public,
     this.favorites = const [],
   });
 
@@ -41,6 +45,8 @@ class Clothing {
       category: json['category'],
       embedding: json['embedding'],
       user: json['user'] != null ? User.fromJson(json['user']) : null,
+      is_public: json['is_public'] ?? false,
+      external_link: json['external_link'],
       favorites: favorites,
     );
   }
@@ -53,6 +59,8 @@ class Clothing {
       'description': description,
       'price': price,
       'category': category,
+      'is_public': is_public,
+      'external_link': external_link,
       'embedding': embedding,
     };
   }

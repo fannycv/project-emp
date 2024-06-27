@@ -15,6 +15,8 @@ class _EditProfileViewState extends State<EditProfileView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  bool _isCompany = false; // Estado para controlar si es una empresa
+
   File? _coverImage;
   File? _profileImage;
 
@@ -36,6 +38,8 @@ class _EditProfileViewState extends State<EditProfileView> {
 
       _usernameController.text = response['username'];
       _emailController.text = response['email'];
+      _isCompany =
+          response['is_company'] ?? false; // Actualiza el estado de empresa
     } catch (e) {
       // Manejar errores al cargar datos
       print('Error al cargar datos del usuario: $e');
@@ -49,6 +53,8 @@ class _EditProfileViewState extends State<EditProfileView> {
         await Supabase.instance.client.from('users').update({
           'username': _usernameController.text,
           'email': _emailController.text,
+          'is_company': _isCompany, // Actualiza el campo is_company
+
           // Puedes agregar más campos aquí si es necesario
         }).eq('id', user!.id);
 
@@ -235,6 +241,21 @@ class _EditProfileViewState extends State<EditProfileView> {
                           return null;
                         },
                       ),
+                      const SizedBox(height: 20),
+                      /*
+                      // Checkbox para indicar si es una empresa
+                      CheckboxListTile(
+                        
+                        title: const Text('¿Eres una empresa?'),
+                        value: _isCompany,
+                        onChanged: (value) {
+                          setState(() {
+                            _isCompany = value ??
+                                false; // Actualizar el estado de empresa
+                          });
+                        },
+                      ),
+                    */
                     ],
                   ),
                 ),

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 final supabase = Supabase.instance.client;
 
@@ -104,6 +105,14 @@ class _MyClothingViewState extends State<MyClothingView> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
+                              /*
+                              IconButton(
+                                icon: const Icon(Icons.edit),
+                                onPressed: () {
+                                  _showEditDialog(item);
+                                },
+                              ),
+                              */
                               GestureDetector(
                                 onTap: () => deleteClothing(item.id ?? -1),
                                 child: const Icon(Icons.delete),
@@ -124,6 +133,19 @@ class _MyClothingViewState extends State<MyClothingView> {
                                   Icons.favorite_border,
                                 ),
                               ),
+                              if (item.external_link != null) // Add this check
+                                IconButton(
+                                  icon: const Icon(Icons.link),
+                                  onPressed: () async {
+                                    final url = item.external_link!;
+                                    if (await canLaunch(url)) {
+                                      await launch(url);
+                                    } else {
+                                      // Handle the case where the URL can't be launched
+                                      print("Could not launch $url");
+                                    }
+                                  },
+                                ),
                             ],
                           ),
                         ),
@@ -319,6 +341,72 @@ class _MyClothingViewState extends State<MyClothingView> {
       print(e);
     }
   }
+
+/*
+  Future<void> _showEditDialog(Clothing item) async {
+    final TextEditingController linkController =
+        TextEditingController(text: item.external_link);
+    bool isPublic = item.is_public ?? false;
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Editar prenda'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  controller: linkController,
+                  decoration: const InputDecoration(
+                    labelText: 'Enlace externo',
+                  ),
+                ),
+                SwitchListTile(
+                  title: const Text('Marcar como público'),
+                  value: isPublic,
+                  onChanged: (bool value) {
+                    setState(() {
+                      isPublic = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Guardar'),
+              onPressed: () async {
+                await editClothing(item.id, linkController.text, isPublic);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> editClothing(int? id, String link, bool isPublic) async {
+    if (id == null) return;
+
+    await supabase.from('clothings').update({
+      'external_link': link,
+      'is_public': isPublic,
+    }).eq('id', id);
+
+    setState(() {
+      _clothingFuture = getData();
+    });
+  }
+*/
 
   Future<List<Clothing>> getData() async {
     try {

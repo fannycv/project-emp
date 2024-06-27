@@ -1,6 +1,7 @@
 import 'package:clothing_identifier/models/clothing.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ClothingDatailView extends StatelessWidget {
   ClothingDatailView({super.key, required this.clothing});
@@ -11,28 +12,48 @@ class ClothingDatailView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Clothing Detail',
+          'Detalle de Prenda',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor:  Colors.black,
+        backgroundColor: Colors.black,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-                child: SizedBox(
-                  height: 400,
-                  child: Image.network(
-                    clothing.image ?? '',
-                    fit: BoxFit.fill,
+            Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+                    child: SizedBox(
+                      height: 400,
+                      child: Image.network(
+                        clothing.image ?? '',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                if (clothing.external_link != null)
+                  Positioned(
+                    top: 20,
+                    right: 20,
+                    child: IconButton(
+                      icon: const Icon(Icons.link),
+                      onPressed: () async {
+                        final url = clothing.external_link!;
+                        if (await canLaunch(url)) {
+                          await launch(url);
+                        } else {
+                          print("Could not launch $url");
+                        }
+                      },
+                    ),
+                  ),
+              ],
             ),
             SizedBox(
               height: 280,

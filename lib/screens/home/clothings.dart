@@ -2,6 +2,7 @@ import 'package:clothing_identifier/models/clothing.dart';
 import 'package:clothing_identifier/screens/clothing_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 final supabase = Supabase.instance.client;
 
@@ -140,7 +141,29 @@ class _ClothingsViewState extends State<ClothingsView> {
                                 ),
                               ),
                             ),
-                          )
+                          ),
+                          if (item.external_link != null)
+                             Positioned(
+                              bottom: 160,
+                              right: 5,
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 5),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.5),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: IconButton(
+                                  onPressed: () {
+                                    launchURL(item.external_link!);
+                                  },
+                                  icon: const Icon(
+                                    Icons.link,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -172,6 +195,14 @@ class _ClothingsViewState extends State<ClothingsView> {
       return tempList.map((e) => Clothing.fromJson(e)).toList();
     } catch (e) {
       return [];
+    }
+  }
+
+  void launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
     }
   }
 }
